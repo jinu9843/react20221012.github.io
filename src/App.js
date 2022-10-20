@@ -32,10 +32,17 @@ function App() {
   // state 사용하는 이유 : 변수는 바뀌면 html에 자동으로 안바꿔줌 그래서 js는 doucument.ready해서 돔시작하자마 바뀌는 init() 함수 같은걸 사용함
   // state 는 그런거 사용안하고 바로바로 자동으로 바꿔줌  자동으로 바꿔주고 안바꿔주는냐가 변수랑 차이점 state는 자동으로 html이 재 랜덩링 됨
   // state 를 변경할려면 state 함수를 사용하여야함
+
+  // 동적인 UI만드는 step
+  // html css로 미리 디자인 완성
+  // ui의 현재 상태를 state 로 저장
+  // state에따라ui가 어떻게 보일지 작성
   let [coat,man2] = useState(['MAN coat', 'WOMAN coat', 'CHILE coat']);
   let [good, goodPlus] = useState([0,0,0]);
   let [change,change1] = useState('WOMAN coat change');
-  let [modal, setModal] = useState(false);
+  let [modal, setModal] = useState([false,false,false]);
+  let [color, setColor] = useState(['grey','grey','grey']);
+  let [input, setInput] =  useState('');
 
   return (
     <div className="App">
@@ -60,9 +67,6 @@ function App() {
         <p>2월 17일 발행</p>
       </div> */}
 
-      {
-
-      }
       {/* <div className="list">
         <h4>{ coat[1] }</h4>
         <p>2월 17일 발행</p>
@@ -82,33 +86,96 @@ function App() {
       {/* {
         modal == true ? <Modal></Modal> : null
       } */}
+      {/* let [good, goodPlus] = useState([0,0,0]); */}
       {
         coat.map((a,i)=>{
-          console.log(a);
-          console.log('dsfdfd',good[i]);
           return(
             <div className="list">
-            <h4 >{ coat[i] }<span onClick={(function(){goodPlus(good[i] + 1)})}>👍</span>{ good[i] }</h4>
+            <h4 onClick={(() => {
+                let copyArr0 = [...modal];
+                if (copyArr0[i] === false) {
+                  copyArr0[i] = true;
+                  setModal(copyArr0);
+                } else {
+                  copyArr0[i] = false;
+                  setModal(copyArr0);
+                }
+              })}>{ coat[i] }<span onClick={(()=>{
+                let copyArr = [...good]; // useState 와 상태값은 타입이 같아야한다 배열타입이나 배열타입으로
+                copyArr[i] = copyArr[i] + 1; 
+                goodPlus(copyArr);
+              })}>👍</span>{ good[i] }
+            </h4>
             <p>2월 17일 발행</p>
+            <button onClick={(e)=>{
+              let copy = [...coat];
+              copy.splice(i,1);
+              //let bbb = copy[i];
+              // console.log('bbbbbbb',bbb);
+              // for(let j = 0 ; j < copy.length; j++) {
+              //   console.log('for for');
+              //   if (copy[j] === bbb) {
+              //     console.log('for for2222',);
+              //     copy.splice(i,1);
+              //     j--;
+              man2(copy);
+                // }
+              // }
+            }}>삭제</button>
+            {
+              
+              modal[i] == true ? <Modal modalComponent={coat[i]} aaa={color[i]} bbb={man2}/> : null
+            }
           </div>
           )
-          
         })
+        
+
       }
+      <input onChange={(e)=>{
+        setInput(e.currentTarget.value);
+      }} ></input>
+      <button onClick={()=>{
+        let copyarr01 = [...coat];
+        copyarr01.unshift(input);
+        man2(copyarr01);
+      }}>추가</button>
+      {/* 추가 버튼 누르면 맨위에 글 추가 
+       let [coat,man2] = useState(['MAN coat', 'WOMAN coat', 'CHILE coat']);
+      */}
+     {/* 템플릿 만들어 놓고 놓을자리에 상태값에 따라서 보여주고 안보여주고 로직짜고 , 클릭버튼에 로직짜고 */}
 
     </div>
   )
-}
+  // props 자식컴포넌트에 작명={ststa이름}
+  // 부모->자식 state전송하려면 props문법 사용하면된다
 
-let Modal = () => {
-  return(
-    <div className="modal">
-      <h4>제목</h4>
-      <p>날짜</p>
-      <p>상세내용</p>
-    </div>
-  )
+  // 1. 버튼 누르면 글 하나 추가되는 기능
+  // 2. 삭제 버튼 누르고 누르면 삭제되는거
 }
+  function Modal(props) {
+    return(
+      <div className="modal" style={{background: props.aaa}}>
+        <h4>{props.modalComponent}</h4>
+        <p>날짜</p>
+        <p>상세내용</p>
+        <button onClick={() => {
+          props.bbb(['1111','2222','3333']);
+        }}>글 수정</button>
+      </div>
+    )
+  }
+  // 글 수정 버튼 누르면 첫 글제목이 여자코트 추천으로 바뀌어야함
+
+// let Modal = () => {
+//   return(
+//     <div className="modal">
+//       <h4>제목</h4>
+//       <p>날짜</p>
+//       <p>상세내용</p>
+//     </div>
+//   )
+// }
 
 
 export default App;
